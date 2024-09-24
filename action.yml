@@ -1,0 +1,25 @@
+name: Cloudflare Pages Secrets
+description: Set the Cloudflare Pages secrets
+author: Nigel Williams-Lucas
+
+branding:
+  icon: "upload-cloud"
+  color: "orange"
+
+inputs:
+  apiToken:
+    description: "Your Cloudflare API Token"
+    required: true
+  accountId:
+    description: "Your Cloudflare Account ID"
+    required: true
+  projectName:
+    description: "The project name for the Cloudflare Pages"
+    required: true
+  secrets:
+    description: "A string of environment variable names, separated by newlines. These will be bound to your Worker as Secrets and must match the names of environment variables declared in `env` of this workflow."
+    required: false
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
