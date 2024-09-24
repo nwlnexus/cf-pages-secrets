@@ -1,4 +1,5 @@
 --container-architecture=linux/amd64
 --action-offline-mode
 --use-new-action-cache
--e payload.json
+--env-file=.env
+-W .github/workflows/self-test.yml

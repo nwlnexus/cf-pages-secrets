@@ -1,11 +1,20 @@
 {
-  "extends": ["@nwlnexus/config/typescript"],
   "compilerOptions": {
-    "baseUrl": "./src",
+    "strict": true,
+    "incremental": true,
+    "composite": true,
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "isolatedModules": true,
     "outDir": "./dist",
+    "module": "NodeNext",
+    "target": "ES2020",
+    "lib": ["ES2020"],
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "noEmit": false
+    "noEmit": false,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 }

@@ -103,3 +103,6 @@ __tests__/runner/*
 *.code-workspace
 
 dist/
+**/.pnpm-store/
+.envrc
+env.tpl
