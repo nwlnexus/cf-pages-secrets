@@ -1,9 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@nwlnexus/cf-pages-secrets",
-  "publishConfig": {
-    "access": "public"
-  },
   "version": "0.0.0-semantically-released",
   "type": "module",
   "main": "dist/index.mjs",
@@ -36,6 +33,8 @@
     "@actions/github": "^6.0.0"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.8",
     "@nwlnexus/config": "^1.1.3",
     "@types/node": "^22.6.1",
     "@vercel/ncc": "^0.38.2",

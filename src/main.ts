@@ -21,6 +21,17 @@ const config = {
   secrets: getMultilineInput('secrets'),
 } as const
 
+const run = async () => {
+  try {
+    authenticationSetup()
+    await uploadSecrets()
+    info('🏁 Wrangler Action completed', true)
+  } catch (err: unknown) {
+    err instanceof Error && error(err.message)
+    setFailed('🚨 Action Failed')
+  }
+}
+
 function error(message: string, bypass?: boolean): void {
   if (!config.QUIET_MODE || bypass) {
     originalError(message)
@@ -42,17 +53,6 @@ function startGroup(message: string): void {
 function endGroup(): void {
   if (!config.QUIET_MODE) {
     originalEndGroup()
-  }
-}
-
-const run = async () => {
-  try {
-    authenticationSetup()
-    await uploadSecrets()
-    info('🏁 Wrangler Action completed', true)
-  } catch (err: unknown) {
-    err instanceof Error && error(err.message)
-    setFailed('🚨 Action Failed')
   }
 }
 
