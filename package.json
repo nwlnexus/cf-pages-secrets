@@ -5,7 +5,8 @@
     "access": "public"
   },
   "version": "0.0.0-semantically-released",
-  "main": "dist/index.js",
+  "type": "module",
+  "main": "dist/index.mjs",
   "keywords": [
     "cloudflare",
     "pages",
@@ -19,8 +20,13 @@
     "url": "https://github.com/nwlnexus"
   },
   "license": "MIT OR Apache-2.0",
-  "exports": {
-    ".": "./dist/index.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nwlnexus/cf-pages-secrets.git"
+  },
+  "homepage": "https://github.com/nwlnexus/cf-pages-secrets#readme",
+  "bugs": {
+    "url": "https://github.com/nwlnexus/cf-pages-secrets/issues"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -32,14 +38,18 @@
   "devDependencies": {
     "@nwlnexus/config": "^1.1.3",
     "@vercel/ncc": "^0.38.2",
-    "vitest": "^2.1.1"
+    "vitest": "^2.1.1",
+    "eslint": "^9.11.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
   },
   "prettier": "@nwlnexus/config/prettier",
   "scripts": {
-    "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
+    "build": "ncc build ./src/index.ts -o dist --source-map --license licenses.txt && mv ./dist/index.js ./dist/index.mjs",
     "clean": "rm -rf .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest"
   },
   "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
 }
