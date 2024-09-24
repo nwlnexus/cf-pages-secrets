@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@nwlnexus/cf-pages-secrets",
-  "version": "0.0.0-semantically-released",
+  "version": "0.1.0",
   "type": "module",
   "main": "dist/index.mjs",
   "keywords": [
@@ -47,9 +47,10 @@
   "scripts": {
     "build": "ncc build ./src/index.ts -o dist --source-map --license licenses.txt && mv ./dist/index.js ./dist/index.mjs",
     "clean": "rm -rf .turbo node_modules",
-    "format": "prettier --check . --ignore-path .gitignore",
-    "lint": "eslint .",
-    "test": "vitest"
+    "format": "prettier --check . --ignore-path ./.gitignore",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "packageManager": "pnpm@9.9.0"
 }
