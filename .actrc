@@ -3,3 +3,4 @@
 --use-new-action-cache
 --env-file=.env
 -W .github/workflows/self-test.yml
+-e payload.json
