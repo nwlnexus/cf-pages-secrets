@@ -1,5 +1,6 @@
+import { debug } from '@actions/core'
 import { config } from './main.js'
-import { info } from './utils.js'
+
 const CF_API_URL = 'https://api.cloudflare.com/client/v4'
 
 type CFResponseCommon = {
@@ -74,8 +75,8 @@ type Deployment = {
 }
 
 type DeploymentConfig = {
-  preview: object
-  production: object
+  preview?: object
+  production?: object
 }
 
 type ProjectResult = {
@@ -112,13 +113,13 @@ export const createProject = async (projectName: string) => {
 
   const data = (await response.json()) as Project
 
-  if (data.errors) {
+  if (data.errors.length > 0) {
+    debug(JSON.stringify(data.errors))
     throw new Error(
       'Failed to create project, ' + data.errors.map((error) => error.message).join(', '),
     )
   }
 
-  info(`🚀 Project ${data.result.name} created: ${data.result.id}`)
   return data.result.id
 }
 
@@ -141,5 +142,63 @@ export const getProject = async (projectName: string) => {
     return data.result.id
   } else {
     return null
+  }
+}
+
+export const updateProject = async (
+  projectName: string,
+  optionalBody?: Partial<
+    Pick<ProjectResult, 'build_config' | 'deployment_configs' | 'name' | 'production_branch'>
+  >,
+) => {
+  const response = await fetch(
+    `${CF_API_URL}/accounts/${config.CLOUDFLARE_ACCOUNT_ID}/pages/projects/${projectName}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Email': config.CLOUDFLARE_API_EMAIL,
+        'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
+      },
+      body: JSON.stringify({
+        name: projectName,
+        production_branch: config.productionBranch,
+        ...optionalBody,
+      }),
+    },
+  )
+
+  const data = (await response.json()) as Project
+
+  console.log(JSON.stringify(data, null, 2))
+
+  if (data.errors.length > 0) {
+    debug(JSON.stringify(data.errors))
+    throw new Error(
+      'Failed to update project, ' + data.errors.map((error) => error.message).join(', '),
+    )
+  }
+}
+
+export const deleteProject = async (projectName: string) => {
+  const response = await fetch(
+    `${CF_API_URL}/accounts/${config.CLOUDFLARE_ACCOUNT_ID}/pages/projects/${projectName}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Email': config.CLOUDFLARE_API_EMAIL,
+        'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
+      },
+    },
+  )
+
+  const data = (await response.json()) as Project
+
+  if (data.errors.length > 0) {
+    debug(JSON.stringify(data.errors))
+    throw new Error(
+      'Failed to delete project, ' + data.errors.map((error) => error.message).join(', '),
+    )
   }
 }

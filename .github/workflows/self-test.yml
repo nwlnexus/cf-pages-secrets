@@ -29,11 +29,14 @@ jobs:
         run: npm run build
 
       - name: Check formatting
+        if: ${{ !env.ACT}}
         run: npm run format
 
       - name: Neither project name nor wrangler.toml path provided (this should fail)
         continue-on-error: true
         uses: ./
+        env:
+          ACT: ${{ env.ACT }}
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
@@ -53,6 +56,8 @@ jobs:
       - name: Specify project name with wrangler.toml
         continue-on-error: true
         uses: ./
+        env:
+          ACT: ${{ env.ACT }}
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
@@ -61,6 +66,8 @@ jobs:
 
       - name: Specify project name and create missing project
         uses: ./
+        env:
+          ACT: ${{ env.ACT }}
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
@@ -71,11 +78,13 @@ jobs:
       - name:
           Specify project name and create missing project preferring projectName over wrangler.toml
         uses: ./
+        env:
+          ACT: ${{ env.ACT }}
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: 'cloudflare-pages-secrets-test1'
+          projectName: 'cloudflare-pages-secrets-test2'
           wranglerConfigPath: 'tests/wrangler-toml-for-project-name/wrangler.toml'
           createMissingProject: true
 
@@ -83,13 +92,15 @@ jobs:
         continue-on-error: true
         uses: ./
         env:
+          ACT: ${{ env.ACT }}
           FOO: 'foo'
           BAR: 'bar'
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: 'cloudflare-pages-secrets-test'
+          projectName: 'cloudflare-pages-secrets-test3'
+          createMissingProject: true
           secrets: |
             FOO
             BAR

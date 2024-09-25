@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs'
-import * as path from 'node:path'
+import path from 'node:path'
+import { env } from 'node:process'
 import {
   error as originalError,
   info as originalInfo,
@@ -9,8 +10,8 @@ import {
 import { createProject, getProject } from './cf-api.js'
 import { config } from './main.js'
 export function authenticationSetup() {
-  process.env.CLOUDFLARE_API_TOKEN = config['CLOUDFLARE_API_TOKEN']
-  process.env.CLOUDFLARE_ACCOUNT_ID = config['CLOUDFLARE_ACCOUNT_ID']
+  env.CLOUDFLARE_API_TOKEN = config['CLOUDFLARE_API_TOKEN']
+  env.CLOUDFLARE_ACCOUNT_ID = config['CLOUDFLARE_ACCOUNT_ID']
 }
 
 export function error(message: string, bypass?: boolean): void {

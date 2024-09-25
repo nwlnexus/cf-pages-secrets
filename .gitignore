@@ -103,3 +103,4 @@ dist/
 **/.pnpm-store/
 .envrc
 env.tpl
+!.vscode/

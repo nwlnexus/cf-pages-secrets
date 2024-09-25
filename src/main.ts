@@ -1,6 +1,8 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
+import { env } from 'node:process'
 import { debug, getBooleanInput, getInput, getMultilineInput, setFailed } from '@actions/core'
 import TOML from '@iarna/toml'
+import { deleteProject, updateProject } from './cf-api.js'
 import {
   error,
   info,
@@ -31,7 +33,7 @@ export const run = async () => {
   let projectId: string | undefined
   let wranglerConfig: Record<string, unknown> | undefined
 
-  if (process.env.ACT) {
+  if (env.ACT) {
     info(`🚀 Running with ACT`)
   }
 
@@ -53,8 +55,13 @@ export const run = async () => {
       info(`💡 Project name set to: ${projectName}`)
     }
 
-    projectId = await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
-    await uploadSecrets(projectId)
+    await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
+    await uploadSecrets(projectName)
+
+    if (env.ACT && projectName) {
+      await deleteProject(projectName)
+      info(`🧹 Project ${projectName} deleted`)
+    }
     info('🏁 Wrangler Action completed', true)
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -62,14 +69,10 @@ export const run = async () => {
     } else {
       setFailed('🚨 Action Failed')
     }
-  } finally {
-    if (projectId) {
-      await deleteProject(projectId)
-    }
   }
 }
 
-async function uploadSecrets(projectId: string) {
+async function uploadSecrets(projectName: string) {
   const secrets = config['secrets']
   info(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
 
@@ -80,8 +83,19 @@ async function uploadSecrets(projectId: string) {
 
   startGroup('ℹ️ Uploading secrets')
   try {
-    const secretValues = Object.fromEntries(secrets.map((secret) => [secret, getSecret(secret)]))
-    info(`🔑 Secret values: ${JSON.stringify(secretValues)}`)
+    const secretValues = new Map()
+    secrets.map((secret) =>
+      secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) }),
+    )
+    const toBeUpdated = {
+      deployment_configs: {
+        [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
+          env_vars: Object.fromEntries(secretValues),
+        },
+      },
+    }
+    info(`🔑 Secret values: ${JSON.stringify(toBeUpdated, null, 2)}`)
+    await updateProject(projectName, toBeUpdated)
   } catch (err: unknown) {
     if (err instanceof Error) {
       error(err.message)
