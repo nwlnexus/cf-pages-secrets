@@ -1,4 +1,4 @@
-name: release
+name: Release
 on: [push, pull_request, workflow_dispatch]
 
 concurrency:
@@ -36,7 +36,8 @@ jobs:
       issues: read
     if:
       ${{ github.repository_owner == 'nwlnexus' &&
-      contains('refs/heads/main,refs/heads/beta,refs/heads/next,refs/heads/alpha', github.ref) }}
+      contains('refs/heads/main,refs/heads/beta,refs/heads/next,refs/heads/alpha', github.ref) &&
+      github.event_name == 'push' }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
