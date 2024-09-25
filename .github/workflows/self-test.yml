@@ -42,6 +42,8 @@ jobs:
       - name: Specify project name
         continue-on-error: true
         uses: ./
+        env:
+          ACT: ${{ env.ACT }}
         with:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}

@@ -28,7 +28,12 @@ export const config = {
 
 export const run = async () => {
   let projectName: string | undefined
+  let projectId: string | undefined
   let wranglerConfig: Record<string, unknown> | undefined
+
+  if (process.env.ACT) {
+    info(`🚀 Running with ACT`)
+  }
 
   try {
     if (config.wranglerConfigPath) {
@@ -48,7 +53,7 @@ export const run = async () => {
       info(`💡 Project name set to: ${projectName}`)
     }
 
-    const projectId = await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
+    projectId = await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
     await uploadSecrets(projectId)
     info('🏁 Wrangler Action completed', true)
   } catch (err: unknown) {
@@ -56,6 +61,10 @@ export const run = async () => {
       error(err.message)
     } else {
       setFailed('🚨 Action Failed')
+    }
+  } finally {
+    if (projectId) {
+      await deleteProject(projectId)
     }
   }
 }
