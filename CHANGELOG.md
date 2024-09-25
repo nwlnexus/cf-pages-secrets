@@ -1,5 +1,13 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.0.0
+
+### Major Changes
+
+- [`7d6ac9a`](https://github.com/nwlnexus/cf-pages-secrets/commit/7d6ac9a22a8592ab6cd8c3d06878c3332137197e)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Creates a project should you choose to do so.
+  Also uploads creates as needed
+
 ## 0.1.1
 
 ### Patch Changes
