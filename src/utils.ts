@@ -12,8 +12,8 @@ import { createProject, getProject } from './cf-api.js'
 import { config } from './main.js'
 
 export function authenticationSetup(): void {
-  env.CLOUDFLARE_API_TOKEN = config['CLOUDFLARE_API_TOKEN']
-  env.CLOUDFLARE_ACCOUNT_ID = config['CLOUDFLARE_ACCOUNT_ID']
+  env.CLOUDFLARE_API_TOKEN = config.CLOUDFLARE_API_TOKEN
+  env.CLOUDFLARE_ACCOUNT_ID = config.CLOUDFLARE_ACCOUNT_ID
 }
 
 export function error(message: string, bypass?: boolean): void {
@@ -44,7 +44,7 @@ export function isObject(item: unknown): item is Record<string, unknown> {
   return item !== null && typeof item === 'object' && !Array.isArray(item)
 }
 
-export function deepMerge<T>(target: T, ...sources: T[]): T {
+export function deepMerge(target: unknown, ...sources: unknown[]): unknown {
   if (!sources.length) return target
   const source = sources.shift()
 
@@ -99,8 +99,8 @@ export function determineProjectName(): {
   let wranglerConfig: Record<string, unknown> | undefined = undefined
 
   if (config.wranglerConfigPath) {
-    const wranglerConfigPath = checkWranglerConfigPath('./' + config.wranglerConfigPath)
-    wranglerConfig = TOML.parse(readFileSync(wranglerConfigPath, 'utf-8'))
+    const cp = checkWranglerConfigPath('./' + config.wranglerConfigPath)
+    wranglerConfig = TOML.parse(readFileSync(cp, 'utf-8'))
     projectName = [config.projectName, wranglerConfig?.name as string | undefined].find(Boolean)
   }
 

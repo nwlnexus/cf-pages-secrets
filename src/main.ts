@@ -39,7 +39,7 @@ export const run = async () => {
     await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
     const secrets = await uploadSecrets()
     const vars = await uploadVars(wranglerConfig)
-    const toBeUpdated = deepMerge<Record<string, unknown>>({}, secrets, vars)
+    const toBeUpdated = deepMerge({}, secrets, vars)
     if (toBeUpdated) {
       await updateProject(projectName, toBeUpdated)
     }
@@ -57,7 +57,7 @@ export const run = async () => {
   }
 }
 
-async function uploadSecrets(): Promise<Record<string, unknown>> {
+export async function uploadSecrets() {
   const secrets = config['secrets']
   let toBeUpdated: Record<string, unknown> = {}
   info(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
@@ -84,9 +84,7 @@ async function uploadSecrets(): Promise<Record<string, unknown>> {
   return toBeUpdated
 }
 
-async function uploadVars(
-  wranglerConfig?: Record<string, unknown> | undefined,
-): Promise<Record<string, unknown>> {
+export async function uploadVars(wranglerConfig?: Record<string, unknown> | undefined) {
   const vars = config['vars']
   let tomlVars: Record<string, unknown> | undefined
   info(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
@@ -118,7 +116,7 @@ async function uploadVars(
     tomlVars = wranglerConfig?.vars as Record<string, unknown>
   }
 
-  const toBeUpdated = deepMerge<Record<string, unknown>>({}, inputVars, tomlVars ?? {})
+  const toBeUpdated = deepMerge({}, tomlVars ?? {}, inputVars)
   debug(`🔑 Variable values: ${JSON.stringify(toBeUpdated, null, 2)}`)
   return toBeUpdated
 }
