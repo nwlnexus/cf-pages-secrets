@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { env } from 'node:process'
 import {
@@ -7,9 +7,11 @@ import {
   startGroup as originalStartGroup,
   endGroup as originalEndGroup,
 } from '@actions/core'
+import TOML from '@iarna/toml'
 import { createProject, getProject } from './cf-api.js'
 import { config } from './main.js'
-export function authenticationSetup() {
+
+export function authenticationSetup(): void {
   env.CLOUDFLARE_API_TOKEN = config['CLOUDFLARE_API_TOKEN']
   env.CLOUDFLARE_ACCOUNT_ID = config['CLOUDFLARE_ACCOUNT_ID']
 }
@@ -38,6 +40,33 @@ export function endGroup(): void {
   }
 }
 
+export function isObject(item: unknown): item is Record<string, unknown> {
+  return item !== null && typeof item === 'object' && !Array.isArray(item)
+}
+
+export function deepMerge<T>(target: T, ...sources: T[]): T {
+  if (!sources.length) return target
+  const source = sources.shift()
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} })
+        deepMerge(target[key], source[key])
+      } else {
+        Object.assign(target, { [key]: source[key] })
+      }
+    }
+  }
+  return deepMerge(target, ...sources)
+}
+
+export function splitOnFirstOccurrence(str: string, delimiter: string): [string, string] {
+  const index = str.indexOf(delimiter)
+  if (index === -1) return [str, '']
+  return [str.slice(0, index), str.slice(index + delimiter.length)]
+}
+
 export function getSecret(secret: string): string {
   if (!secret) {
     throw new Error('❌ Secret name cannot be blank.')
@@ -60,6 +89,27 @@ export function getEnvVar(name: string): string {
     throw new Error(`❌ Environment variable ${name} is not set`)
   }
   return value
+}
+
+export function determineProjectName(): {
+  projectName: string
+  wranglerConfig: Record<string, unknown> | undefined
+} {
+  let projectName: string | undefined = undefined
+  let wranglerConfig: Record<string, unknown> | undefined = undefined
+
+  if (config.wranglerConfigPath) {
+    const wranglerConfigPath = checkWranglerConfigPath('./' + config.wranglerConfigPath)
+    wranglerConfig = TOML.parse(readFileSync(wranglerConfigPath, 'utf-8'))
+    projectName = [config.projectName, wranglerConfig?.name as string | undefined].find(Boolean)
+  }
+
+  if (!projectName) {
+    throw new Error('Project name not found in wrangler.toml and not provided as projectName input')
+  }
+
+  info(`💡 Project name set to: ${projectName}`)
+  return { projectName, wranglerConfig }
 }
 
 export function checkWranglerConfigPath(wranglerConfigPath: string): string {

@@ -19,7 +19,7 @@ inputs:
   quiet:
     description: 'Supresses output from Wrangler commands, defaults to `false`'
     required: false
-    default: false
+    default: 'false'
   projectName:
     description: 'The project name for the Cloudflare Pages'
     required: false
@@ -29,16 +29,22 @@ inputs:
   createMissingProject:
     description: 'Create project if it does not exist'
     required: false
-    default: false
+    default: 'false'
   productionBranch:
     description: 'The production branch for the Cloudflare Pages'
     required: false
     default: 'main'
-  secrets:
+  vars:
     description:
       'A string of environment variable names, separated by newlines. These will be bound to your
       Worker as Secrets and must match the names of environment variables declared in `env` of this
       workflow.'
+    required: false
+  secrets:
+    description:
+      'A string of environment variable names to be set as secrets, separated by newlines. These
+      will be bound to your Worker as Secrets and must match the names of environment variables
+      declared in `env` of this workflow.'
     required: false
 
 runs:

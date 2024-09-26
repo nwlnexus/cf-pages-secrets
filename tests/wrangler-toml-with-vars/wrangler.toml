@@ -1,5 +1,5 @@
 name = "test-project-vars"
 
 [vars]
-FOO = "foo"
-BAR = "bar"
+FOO_VAR = "foo"
+BAR_VAR = "bar"

@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs'
 import { env } from 'node:process'
 import { debug, getBooleanInput, getInput, getMultilineInput, setFailed } from '@actions/core'
-import TOML from '@iarna/toml'
 import { deleteProject, updateProject } from './cf-api.js'
 import {
   error,
@@ -9,8 +7,10 @@ import {
   startGroup,
   endGroup,
   getSecret,
-  checkWranglerConfigPath,
+  determineProjectName,
   checkProjectExists,
+  splitOnFirstOccurrence,
+  deepMerge,
 } from './utils.js'
 
 /**
@@ -25,39 +25,24 @@ export const config = {
   projectName: getInput('projectName'),
   wranglerConfigPath: getInput('wranglerConfigPath'),
   productionBranch: getInput('productionBranch'),
+  vars: getMultilineInput('vars'),
   secrets: getMultilineInput('secrets'),
 } as const
 
 export const run = async () => {
-  let projectName: string | undefined
-  let projectId: string | undefined
-  let wranglerConfig: Record<string, unknown> | undefined
-
   if (env.ACT) {
     info(`🚀 Running with ACT`)
   }
 
   try {
-    if (config.wranglerConfigPath) {
-      const wranglerConfigPath = checkWranglerConfigPath('./' + config.wranglerConfigPath)
-      wranglerConfig = TOML.parse(readFileSync(wranglerConfigPath, 'utf-8'))
-    }
-    projectName = [config.projectName, wranglerConfig?.name as string | undefined].filter(
-      Boolean,
-    )[0]
-
-    if (!projectName) {
-      throw new Error(
-        'Project name not found in wrangler.toml and not provided as projectName input',
-      )
-    }
-    if (projectName) {
-      info(`💡 Project name set to: ${projectName}`)
-    }
-
+    const { projectName, wranglerConfig } = determineProjectName()
     await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
-    await uploadSecrets(projectName)
-
+    const secrets = await uploadSecrets()
+    const vars = await uploadVars(wranglerConfig)
+    const toBeUpdated = deepMerge<Record<string, unknown>>({}, secrets, vars)
+    if (toBeUpdated) {
+      await updateProject(projectName, toBeUpdated)
+    }
     if (env.ACT && projectName) {
       await deleteProject(projectName)
       info(`🧹 Project ${projectName} deleted`)
@@ -72,40 +57,68 @@ export const run = async () => {
   }
 }
 
-async function uploadSecrets(projectName: string) {
+async function uploadSecrets(): Promise<Record<string, unknown>> {
   const secrets = config['secrets']
+  let toBeUpdated: Record<string, unknown> = {}
   info(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
 
   if (secrets.length === 0) {
     info('❌ No secrets to upload')
-    return
+    return {}
   }
 
   startGroup('ℹ️ Uploading secrets')
-  try {
-    const secretValues = new Map()
-    secrets.map((secret) =>
-      secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) }),
-    )
-    const toBeUpdated = {
-      deployment_configs: {
-        [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
-          env_vars: Object.fromEntries(secretValues),
-        },
+  const secretValues = new Map()
+  secrets.map((secret) =>
+    secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) }),
+  )
+  toBeUpdated = {
+    deployment_configs: {
+      [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
+        env_vars: Object.fromEntries(secretValues),
       },
-    }
-    info(`🔑 Secret values: ${JSON.stringify(toBeUpdated, null, 2)}`)
-    await updateProject(projectName, toBeUpdated)
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      error(err.message)
-      if (err.stack) {
-        debug(err.stack)
-      }
-    } else {
-      throw new Error('Failed to upload secrets')
-    }
-  } finally {
-    endGroup()
+    },
   }
+  debug(`🔑 Secret values: ${JSON.stringify(toBeUpdated, null, 2)}`)
+  endGroup()
+  return toBeUpdated
+}
+
+async function uploadVars(
+  wranglerConfig?: Record<string, unknown> | undefined,
+): Promise<Record<string, unknown>> {
+  const vars = config['vars']
+  let tomlVars: Record<string, unknown> | undefined
+  info(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
+
+  if (vars.length === 0) {
+    info('❌ No variables to upload')
+    return {}
+  }
+
+  startGroup('ℹ️ Uploading variables')
+  const varValues = new Map()
+
+  vars.map((v) => {
+    const [key, value] = splitOnFirstOccurrence(v, '=')
+    varValues.set(key, { type: 'plain_text', value })
+  })
+
+  // This is the vars that are passed in from the action
+  const inputVars = {
+    deployment_configs: {
+      [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
+        env_vars: Object.fromEntries(varValues),
+      },
+    },
+  }
+
+  if (wranglerConfig) {
+    // This is the vars that are passed in from the wrangler.toml file
+    tomlVars = wranglerConfig?.vars as Record<string, unknown>
+  }
+
+  const toBeUpdated = deepMerge<Record<string, unknown>>({}, inputVars, tomlVars ?? {})
+  debug(`🔑 Variable values: ${JSON.stringify(toBeUpdated, null, 2)}`)
+  return toBeUpdated
 }
