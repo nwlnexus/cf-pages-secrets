@@ -1,5 +1,13 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.1.0
+
+### Minor Changes
+
+- [`e830f80`](https://github.com/nwlnexus/cf-pages-secrets/commit/e830f808e2395d68b827885aed603f04d24b4eeb)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Now accepting variable uploads from commandline
+  and wrangler.toml
+
 ## 1.0.0
 
 ### Major Changes
