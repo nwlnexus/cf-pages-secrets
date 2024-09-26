@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.2.0
+
+### Minor Changes
+
+- [`8c87908`](https://github.com/nwlnexus/cf-pages-secrets/commit/8c879080ec1c53dc65f95fbf601c370c779f1f1d)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Fixing references
+
 ## 1.1.0
 
 ### Minor Changes
