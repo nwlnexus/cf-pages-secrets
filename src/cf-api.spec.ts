@@ -49,8 +49,11 @@ describe('Cloudflare API functions', () => {
             'X-Auth-Email': config.CLOUDFLARE_API_EMAIL,
             'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
           }),
-          body: JSON.stringify({ name: 'test-project', production_branch: config.productionBranch }),
-        })
+          body: JSON.stringify({
+            name: 'test-project',
+            production_branch: config.productionBranch,
+          }),
+        }),
       )
     })
 
@@ -65,7 +68,9 @@ describe('Cloudflare API functions', () => {
         json: () => Promise.resolve(mockResponse),
       })
 
-      await expect(createProject('test-project')).rejects.toThrow('Failed to create project, Project creation failed')
+      await expect(createProject('test-project')).rejects.toThrow(
+        'Failed to create project, Project creation failed',
+      )
     })
   })
 
@@ -93,7 +98,7 @@ describe('Cloudflare API functions', () => {
             'X-Auth-Email': config.CLOUDFLARE_API_EMAIL,
             'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
           }),
-        })
+        }),
       )
     })
 
@@ -142,7 +147,7 @@ describe('Cloudflare API functions', () => {
             production_branch: config.productionBranch,
             name: 'updated-project',
           }),
-        })
+        }),
       )
     })
 
@@ -157,7 +162,9 @@ describe('Cloudflare API functions', () => {
         json: () => Promise.resolve(mockResponse),
       })
 
-      await expect(updateProject('test-project')).rejects.toThrow('Failed to update project, Project update failed')
+      await expect(updateProject('test-project')).rejects.toThrow(
+        'Failed to update project, Project update failed',
+      )
     })
   })
 
@@ -184,7 +191,7 @@ describe('Cloudflare API functions', () => {
             'X-Auth-Email': config.CLOUDFLARE_API_EMAIL,
             'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
           }),
-        })
+        }),
       )
     })
 
@@ -199,7 +206,9 @@ describe('Cloudflare API functions', () => {
         json: () => Promise.resolve(mockResponse),
       })
 
-      await expect(deleteProject('test-project')).rejects.toThrow('Failed to delete project, Project deletion failed')
+      await expect(deleteProject('test-project')).rejects.toThrow(
+        'Failed to delete project, Project deletion failed',
+      )
     })
   })
 })
