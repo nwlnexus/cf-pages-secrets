@@ -2,14 +2,14 @@ import * as fs from 'node:fs'
 import * as core from '@actions/core'
 import TOML from '@iarna/toml'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import * as cfApi from './cf-api.js'
-import * as utils from './utils.js'
+import * as cfApi from '../src/cf-api.js'
+import * as utils from '../src/utils.js'
 
 vi.mock('node:fs')
 vi.mock('@actions/core')
 vi.mock('@iarna/toml')
-vi.mock('./cf-api.js')
-vi.mock('./main.js', () => ({
+vi.mock('../src/cf-api.js')
+vi.mock('../src/main.js', () => ({
   config: {
     CLOUDFLARE_API_TOKEN: 'test-token',
     CLOUDFLARE_ACCOUNT_ID: 'test-account-id',

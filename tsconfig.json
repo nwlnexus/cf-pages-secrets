@@ -3,7 +3,7 @@
     "strict": true,
     "incremental": true,
     "composite": true,
-    "rootDir": "./src",
+    "baseUrl": "./",
     "skipLibCheck": true,
     "isolatedModules": true,
     "outDir": "./dist",
@@ -15,6 +15,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts", "**/*.spec.ts", "vitest.config.js"],
+  "include": ["src/**/*.ts", "vitest.config.js"],
   "exclude": ["node_modules", "dist"]
 }

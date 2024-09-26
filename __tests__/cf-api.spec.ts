@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { createProject, getProject, updateProject, deleteProject } from './cf-api'
-import { config } from './main.js'
+import { createProject, getProject, updateProject, deleteProject } from '../src/cf-api.js'
+import { config } from '../src/main.js'
 
 // Mock fetch
 const mockFetch = vi.fn()
@@ -143,7 +143,6 @@ describe('Cloudflare API functions', () => {
             'X-Auth-Key': config.CLOUDFLARE_API_TOKEN,
           }),
           body: JSON.stringify({
-            name: 'test-project',
             production_branch: config.productionBranch,
             name: 'updated-project',
           }),

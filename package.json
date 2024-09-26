@@ -52,7 +52,7 @@
   },
   "prettier": "@nwlnexus/config/prettier",
   "scripts": {
-    "build": "npx ncc build ./src/index.ts -o dist --source-map --license licenses.txt && mv ./dist/index.js ./dist/index.mjs",
+    "build": "npx ncc build ./src/index.ts -o dist --license licenses.txt && mv ./dist/index.js ./dist/index.mjs",
     "clean": "rm -rf .turbo node_modules",
     "format": "prettier --check . --ignore-path ./.gitignore",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
