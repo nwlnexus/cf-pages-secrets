@@ -21,7 +21,8 @@ export const config = {
   CLOUDFLARE_API_TOKEN: getInput('apiToken', { required: true }),
   CLOUDFLARE_ACCOUNT_ID: getInput('accountId', { required: true }),
   QUIET_MODE: getBooleanInput('quiet'),
-  CREATE_MISSING_PROJECT: getBooleanInput('createMissingProject'),
+  CREATE_PROJECT: getBooleanInput('createProject'),
+  DELETE_PROJECT: getBooleanInput('deleteProject'),
   projectName: getInput('projectName'),
   wranglerConfigPath: getInput('wranglerConfigPath'),
   productionBranch: getInput('productionBranch'),
@@ -36,14 +37,14 @@ export const run = async () => {
 
   try {
     const { projectName, wranglerConfig } = determineProjectName()
-    await checkProjectExists(projectName, config.CREATE_MISSING_PROJECT)
+    await checkProjectExists(projectName, config.CREATE_PROJECT)
     const secrets = await uploadSecrets()
     const vars = await uploadVars(wranglerConfig)
     const toBeUpdated = deepMerge({}, secrets, vars)
     if (toBeUpdated) {
       await updateProject(projectName, toBeUpdated)
     }
-    if (env.ACT && projectName) {
+    if (env.ACT && projectName && config.DELETE_PROJECT) {
       await deleteProject(projectName)
       info(`🧹 Project ${projectName} deleted`)
     }

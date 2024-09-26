@@ -170,8 +170,6 @@ export const updateProject = async (
 
   const data = (await response.json()) as Project
 
-  console.log(JSON.stringify(data, null, 2))
-
   if (data.errors.length > 0) {
     debug(JSON.stringify(data.errors))
     throw new Error(
