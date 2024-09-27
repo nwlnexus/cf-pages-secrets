@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.4.0
+
+### Minor Changes
+
+- [`927363e`](https://github.com/nwlnexus/cf-pages-secrets/commit/927363ee6890383acb89eebd8831584608de223d)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Correcting variable handling
+
 ## 1.3.1
 
 ### Patch Changes
