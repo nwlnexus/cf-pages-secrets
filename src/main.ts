@@ -61,18 +61,17 @@ export const run = async () => {
 export async function uploadSecrets() {
   const secrets = config['secrets']
   let toBeUpdated: Record<string, unknown> = {}
-  info(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
 
   if (secrets.length === 0) {
-    info('❌ No secrets to upload')
     return {}
   }
 
-  startGroup('ℹ️ Uploading secrets')
+  startGroup(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
   const secretValues = new Map()
-  secrets.map((secret) =>
-    secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) }),
-  )
+  secrets.map((secret) => {
+    info(`🔑 Secret: ${secret}`)
+    secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) })
+  })
   toBeUpdated = {
     deployment_configs: {
       [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
@@ -80,7 +79,6 @@ export async function uploadSecrets() {
       },
     },
   }
-  debug(`🔑 Secret values: ${JSON.stringify(toBeUpdated, null, 2)}`)
   endGroup()
   return toBeUpdated
 }
@@ -88,18 +86,17 @@ export async function uploadSecrets() {
 export async function uploadVars(wranglerConfig?: Record<string, unknown> | undefined) {
   const vars = config['vars']
   let tomlVars: Record<string, unknown> | undefined
-  info(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
 
   if (vars.length === 0) {
-    info('❌ No variables to upload')
     return {}
   }
 
-  startGroup('ℹ️ Uploading variables')
+  startGroup(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
   const varValues = new Map()
 
   vars.map((v) => {
     const [key, value] = splitOnFirstOccurrence(v, '=')
+    info(`Variable: ${key}`)
     varValues.set(key, { type: 'plain_text', value })
   })
 
