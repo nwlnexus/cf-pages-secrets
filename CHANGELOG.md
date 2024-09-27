@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.4.1
+
+### Patch Changes
+
+- [`cdf0d26`](https://github.com/nwlnexus/cf-pages-secrets/commit/cdf0d262f6c1abb3bf09ad07cdc799093a90e2ec)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Fix for login parsing variable
+
 ## 1.4.0
 
 ### Minor Changes
