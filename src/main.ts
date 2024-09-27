@@ -69,7 +69,7 @@ export async function uploadSecrets() {
   startGroup(`ℹ️ Uploading ${secrets.length} secrets to Cloudflare Pages`)
   const secretValues = new Map()
   secrets.map((secret) => {
-    info(`🔑 Secret: ${secret}`)
+    info(`🔑 ${secret}`)
     secretValues.set(secret, { type: 'secret_text', value: getSecret(secret) })
   })
   toBeUpdated = {
@@ -110,8 +110,8 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
   }
 
   startGroup(`ℹ️ Uploading ${varValues.size} variables to Cloudflare Pages`)
-  varValues.forEach((value, key) => {
-    info(`${key}=${value}`)
+  varValues.forEach((item, key) => {
+    info(`${key}=${item.value}`)
   })
 
   const toBeUpdated = {
