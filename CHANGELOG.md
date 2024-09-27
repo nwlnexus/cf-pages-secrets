@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.3.1
+
+### Patch Changes
+
+- [`0a18492`](https://github.com/nwlnexus/cf-pages-secrets/commit/0a1849219bf78a357775e0d4eb61637d95e93c36)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - house keeping
+
 ## 1.3.0
 
 ### Minor Changes
