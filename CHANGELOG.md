@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.4.2
+
+### Patch Changes
+
+- [`00aeb8b`](https://github.com/nwlnexus/cf-pages-secrets/commit/00aeb8ba2d6bf56fdc857a0bad4d2ea5b69ec331)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Fix for printouts of variables
+
 ## 1.4.1
 
 ### Patch Changes
