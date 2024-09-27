@@ -74,6 +74,7 @@ jobs:
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test1'
           createProject: true
+          deleteProject: true
 
       - name:
           Specify project name and create missing project preferring projectName over wrangler.toml
@@ -87,7 +88,7 @@ jobs:
           projectName: 'cloudflare-pages-secrets-test2'
           wranglerConfigPath: 'test_data/wrangler-toml-for-project-name/wrangler.toml'
           createProject: true
-
+          deleteProject: true
       - name: Specify project name and secrets
         continue-on-error: true
         uses: ./
@@ -101,6 +102,7 @@ jobs:
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test3'
           createProject: true
+          deleteProject: true
           secrets: |
             FOO
             BAR
@@ -117,6 +119,29 @@ jobs:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test4'
+          createProject: true
+          wranglerConfigPath: 'test_data/wrangler-toml-with-vars/wrangler.toml'
+          vars: |
+            FOO_VAR2=foo2
+            BAR_VAR2=bar2
+            BUZ_VAR=buz2
+          secrets: |
+            FOO
+            BAR
+
+      - name: Specify project name and secrets with wrangler.toml containing variables as well
+        continue-on-error: true
+        uses: ./
+        env:
+          ACT: ${{ env.ACT }}
+          FOO: 'foo'
+          BAR: 'bar'
+        with:
+          apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'cloudflare-pages-secrets-test5'
+          productionBranch: 'release'
           createProject: true
           wranglerConfigPath: 'test_data/wrangler-toml-with-vars/wrangler.toml'
           vars: |

@@ -44,7 +44,7 @@ export const run = async () => {
     if (toBeUpdated) {
       await updateProject(projectName, toBeUpdated)
     }
-    if ((env.ACT || config.DELETE_PROJECT) && projectName) {
+    if (config.DELETE_PROJECT && projectName) {
       await deleteProject(projectName)
       info(`🧹 Project ${projectName} deleted`)
     }
@@ -87,21 +87,15 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
   const vars = config['vars']
   let tomlVars: Record<string, unknown>
 
-  if (vars.length === 0) {
-    return {}
-  }
-
-  startGroup(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
   const varValues = new Map()
-
   if (wranglerConfig && 'vars' in wranglerConfig) {
     // This is the vars that are passed in from the wrangler.toml file
     tomlVars = wranglerConfig.vars as Record<string, unknown>
     Object.entries(tomlVars).map(([key, value]) => {
-      info(`${key}=${value}`)
       varValues.set(key, { type: 'plain_text', value })
     })
   }
+
   // This is the vars that are passed in from the action
   // Keys that are not in the wrangler.toml file are added
   // Keys that are in both are overwritten by the vars from the action
@@ -109,6 +103,15 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
     const [key, value] = splitOnFirstOccurrence(v, '=')
     info(`${key}=${value}`)
     varValues.set(key, { type: 'plain_text', value })
+  })
+
+  if (varValues.size === 0) {
+    return {}
+  }
+
+  startGroup(`ℹ️ Uploading ${varValues.size} variables to Cloudflare Pages`)
+  varValues.forEach((value, key) => {
+    info(`${key}=${value}`)
   })
 
   const toBeUpdated = {
@@ -120,5 +123,6 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
   }
 
   debug(`🔑 Variable values: ${JSON.stringify(toBeUpdated, null, 2)}`)
+  endGroup()
   return toBeUpdated
 }
