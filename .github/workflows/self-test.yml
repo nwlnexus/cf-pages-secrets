@@ -62,7 +62,7 @@ jobs:
           apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerConfigPath: 'tests/wrangler-toml-for-project-name/wrangler.toml'
+          wranglerConfigPath: 'test_data/wrangler-toml-for-project-name/wrangler.toml'
 
       - name: Specify project name and create missing project
         uses: ./
@@ -73,7 +73,7 @@ jobs:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test1'
-          createMissingProject: true
+          createProject: true
 
       - name:
           Specify project name and create missing project preferring projectName over wrangler.toml
@@ -85,8 +85,8 @@ jobs:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test2'
-          wranglerConfigPath: 'tests/wrangler-toml-for-project-name/wrangler.toml'
-          createMissingProject: true
+          wranglerConfigPath: 'test_data/wrangler-toml-for-project-name/wrangler.toml'
+          createProject: true
 
       - name: Specify project name and secrets
         continue-on-error: true
@@ -100,7 +100,29 @@ jobs:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           projectName: 'cloudflare-pages-secrets-test3'
-          createMissingProject: true
+          createProject: true
+          secrets: |
+            FOO
+            BAR
+
+      - name: Specify project name and secrets with wrangler.toml containing variables as well
+        continue-on-error: true
+        uses: ./
+        env:
+          ACT: ${{ env.ACT }}
+          FOO: 'foo'
+          BAR: 'bar'
+        with:
+          apiEmail: ${{ env.CLOUDFLARE_API_EMAIL }}
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'cloudflare-pages-secrets-test4'
+          createProject: true
+          wranglerConfigPath: 'test_data/wrangler-toml-with-vars/wrangler.toml'
+          vars: |
+            FOO_VAR2=foo2
+            BAR_VAR2=bar2
+            BUZ_VAR=buz2
           secrets: |
             FOO
             BAR

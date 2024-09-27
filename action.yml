@@ -8,37 +8,29 @@ branding:
 
 inputs:
   apiEmail:
-    type: string
     description: 'Your Cloudflare API Email'
     required: true
   apiToken:
-    type: string
     description: 'Your Cloudflare API Token'
     required: true
   accountId:
-    type: string
     description: 'Your Cloudflare Account ID'
     required: true
   quiet:
-    type: boolean
     description: 'Supresses output from Wrangler commands, defaults to `false`'
     required: false
-    default: false
+    default: 'false'
   projectName:
-    type: string
     description: 'The project name for the Cloudflare Pages'
     required: false
   wranglerConfigPath:
-    type: string
     description: 'The path to the wrangler.toml file'
     required: false
   createProject:
-    type: boolean
     description: 'Create project if it does not exist'
     required: false
-    default: false
+    default: 'false'
   productionBranch:
-    type: string
     description: 'The production branch for the Cloudflare Pages'
     required: false
     default: 'main'
@@ -55,10 +47,9 @@ inputs:
       declared in `env` of this workflow.'
     required: false
   deleteProject:
-    type: boolean
     description: 'Delete the project after the workflow has run. Only used for testing.'
     required: false
-    default: false
+    default: 'false'
 
 runs:
   using: 'node20'

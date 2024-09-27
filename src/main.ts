@@ -44,7 +44,7 @@ export const run = async () => {
     if (toBeUpdated) {
       await updateProject(projectName, toBeUpdated)
     }
-    if (env.ACT && projectName && config.DELETE_PROJECT) {
+    if ((env.ACT || config.DELETE_PROJECT) && projectName) {
       await deleteProject(projectName)
       info(`🧹 Project ${projectName} deleted`)
     }
@@ -85,7 +85,7 @@ export async function uploadSecrets() {
 
 export async function uploadVars(wranglerConfig?: Record<string, unknown> | undefined) {
   const vars = config['vars']
-  let tomlVars: Record<string, unknown> | undefined
+  let tomlVars: Record<string, unknown>
 
   if (vars.length === 0) {
     return {}
@@ -94,14 +94,24 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
   startGroup(`ℹ️ Uploading ${vars.length} variables to Cloudflare Pages`)
   const varValues = new Map()
 
+  if (wranglerConfig && 'vars' in wranglerConfig) {
+    // This is the vars that are passed in from the wrangler.toml file
+    tomlVars = wranglerConfig.vars as Record<string, unknown>
+    Object.entries(tomlVars).map(([key, value]) => {
+      info(`${key}=${value}`)
+      varValues.set(key, { type: 'plain_text', value })
+    })
+  }
+  // This is the vars that are passed in from the action
+  // Keys that are not in the wrangler.toml file are added
+  // Keys that are in both are overwritten by the vars from the action
   vars.map((v) => {
     const [key, value] = splitOnFirstOccurrence(v, '=')
-    info(`Variable: ${key}`)
+    info(`${key}=${value}`)
     varValues.set(key, { type: 'plain_text', value })
   })
 
-  // This is the vars that are passed in from the action
-  const inputVars = {
+  const toBeUpdated = {
     deployment_configs: {
       [`${config.productionBranch === env.GITHUB_REF_NAME ? 'production' : 'preview'}`]: {
         env_vars: Object.fromEntries(varValues),
@@ -109,12 +119,6 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
     },
   }
 
-  if (wranglerConfig) {
-    // This is the vars that are passed in from the wrangler.toml file
-    tomlVars = wranglerConfig?.vars as Record<string, unknown>
-  }
-
-  const toBeUpdated = deepMerge({}, tomlVars ?? {}, inputVars)
   debug(`🔑 Variable values: ${JSON.stringify(toBeUpdated, null, 2)}`)
   return toBeUpdated
 }
