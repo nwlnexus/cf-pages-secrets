@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.3.0
+
+### Minor Changes
+
+- [`149d8b7`](https://github.com/nwlnexus/cf-pages-secrets/commit/149d8b7fc8e34485ba6b0fe9548604820d4f8062)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Updated to allow project deletion
+
 ## 1.2.0
 
 ### Minor Changes
