@@ -1,5 +1,0 @@
-name = "test-project-vars"
-
-[vars]
-FOO_VAR = "foo"
-BAR_VAR = "bar"
