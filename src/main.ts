@@ -42,6 +42,7 @@ export const run = async () => {
     const vars = await uploadVars(wranglerConfig)
     const toBeUpdated = deepMerge({}, secrets, vars)
     if (toBeUpdated) {
+      debug(`🔧 Updating project ${projectName} with: \n${JSON.stringify(toBeUpdated, null, 2)}`)
       await updateProject(projectName, toBeUpdated)
     }
     if (config.DELETE_PROJECT && projectName) {
