@@ -1,5 +1,12 @@
 # @nwlnexus/cf-pages-secrets
 
+## 1.4.3
+
+### Patch Changes
+
+- [`943d0d1`](https://github.com/nwlnexus/cf-pages-secrets/commit/943d0d105a858eec930a7748e47d48075897d8c7)
+  Thanks [@nwlucas](https://github.com/nwlucas)! - Addin gin some debug statements
+
 ## 1.4.2
 
 ### Patch Changes
