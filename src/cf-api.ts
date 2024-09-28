@@ -112,7 +112,7 @@ export const createProject = async (projectName: string) => {
   )
 
   const data = (await response.json()) as Project
-
+  debug(`🚀 Created project ${projectName}`)
   if (data.errors.length > 0) {
     debug(JSON.stringify(data.errors))
     throw new Error(
@@ -137,7 +137,7 @@ export const getProject = async (projectName: string) => {
   )
 
   const data = (await response.json()) as Project
-
+  debug(`🔍 Project ${projectName} found`)
   if (data.result && data.result.id) {
     return data.result.id
   } else {
@@ -169,6 +169,7 @@ export const updateProject = async (
   )
 
   const data = (await response.json()) as Project
+  debug(`🧹 Updated project ${projectName}`)
 
   if (data.errors.length > 0) {
     debug(JSON.stringify(data.errors))
@@ -192,6 +193,7 @@ export const deleteProject = async (projectName: string) => {
   )
 
   const data = (await response.json()) as Project
+  debug(`🧹 Deleted project ${projectName}`)
 
   if (data.errors.length > 0) {
     debug(JSON.stringify(data.errors))
