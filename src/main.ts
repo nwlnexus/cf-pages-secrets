@@ -102,7 +102,6 @@ export async function uploadVars(wranglerConfig?: Record<string, unknown> | unde
   // Keys that are in both are overwritten by the vars from the action
   vars.map((v) => {
     const [key, value] = splitOnFirstOccurrence(v, '=')
-    info(`${key}=${value}`)
     varValues.set(key, { type: 'plain_text', value })
   })
 
